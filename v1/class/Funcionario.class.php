@@ -1,34 +1,64 @@
 <?php
 include_once 'conexao.class.php';
 
-class usuariosDTO {
+class Funcionario {
     private $param ="";
     private $id;
-    private $nome="";
-    private $login="";
-    private $senha ="";
-    private $foto ="";
+    private $Nome;
+    private $CPF;
+    private $DataDeNascimento;
+    private $NomeDaMae;
+    private $Foto;
+    private $Email;
+    private $Senha;
     private $cnn="";
     private $SQL = "";
+    
     function getId() {
         return $this->id;
     }
-   
-    function setId($id) {
-        $this->id = $id;
+    function getCPF() {
+        return $this->CPF;
     }
-    
+
+    function getDataDeNascimento() {
+        return $this->DataDeNascimento;
+    }
+
+    function getNomeDaMae() {
+        return $this->NomeDaMae;
+    }
+
     function getFoto() {
-        return $this->foto;
+        return $this->Foto;
     }
-    function getLogin() {
-        return $this->login;
+
+    function getEmail() {
+        return $this->Email;
     }
-    function setFoto($foto) {
-        $this->foto = $foto;
+
+    function setCPF($CPF) {
+        $this->CPF = $CPF;
     }
-   
-        public function __construct($ID = "") {
+
+    function setDataDeNascimento($DataDeNascimento) {
+        $this->DataDeNascimento = $DataDeNascimento;
+    }
+
+    function setNomeDaMae($NomeDaMae) {
+        $this->NomeDaMae = $NomeDaMae;
+    }
+
+    function setFoto($Foto) {
+        $this->Foto = $Foto;
+    }
+
+    function setEmail($Email) {
+        $this->Email = $Email;
+    }
+
+    
+    public function __construct($ID = "") {
         $this->cnn = new conexao();
 
         $this->SQL = "SELECT * FROM UsuarioDTO WHERE id = ".$ID."";

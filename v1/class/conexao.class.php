@@ -2,9 +2,9 @@
 
 
 class conexao {
-    private $user= 'id5683820_hoot';
-    private $pass= '123456';
-    private $dbname ='id5683820_ws_app';
+    private $user= 'id5683820_wsandroid';
+    private $pass= 'wsandroid';
+    private $dbname ='id5683820_wsandroid';
     private $servidor='localhost';
     private $dns = '';
     public function Conexao() {
