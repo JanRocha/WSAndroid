@@ -2,7 +2,7 @@
 include_once 'conexao.class.php';
 
 class Empresa {
-    private $id;
+    private $idempresa;
     private $CNPJ;
     private $NomeFantasia;
     private $RazaoSocial;
@@ -71,7 +71,7 @@ class Empresa {
         public function __construct($ID = "") {
         $this->cnn = new conexao();
 
-        $this->SQL = "SELECT * FROM Pontos WHERE id = ".$ID;
+        $this->SQL = "SELECT * FROM empresa WHERE id = ".$ID;
         //echo $this->SQL;
         $result = $this->cnn->Conexao()->prepare($this->SQL);
         $result->execute();
@@ -106,7 +106,7 @@ class Empresa {
             $where='';        
          
         $cnn = new conexao();
-        $result= $cnn->Conexao()->query("SELECT * FROM Empresa ".$where);
+        $result= $cnn->Conexao()->query("SELECT * FROM empresa ".$where);
         //resut set alimentado para retornar o json
         while($row = $result->fetch(PDO::FETCH_ASSOC)){
             $tr[] = $row;
@@ -123,14 +123,14 @@ class Empresa {
     public function salvar() {
         $id_res= 0;
         if ($this->id == '-1'){
-              $this->SQL = "INSERT INTO Empresa("
-                    . "id,"
-                    . "CNPJ,"
-                    . "NomeFantasia,"
-                    . "RazaoSocial,"
-                    . "Email,"
-                    . "Telefone,"
-                    . "Senha) VALUES('-1','"
+              $this->SQL = "INSERT INTO empresa("
+                    . "idempresa,"
+                    . "cnpj,"
+                    . "nome_fantasia,"
+                    . "razao_social,"
+                    . "email,"
+                    . "telefone,"
+                    . "senha) VALUES('-1','"
                     . "$this->CNPJ','"
                     . "$this->NomeFantasia','"
                     . "$this->RazaoSocial',"
@@ -142,14 +142,14 @@ class Empresa {
             $result->execute();                
             $id_res = $result->rowCount(); 
         }else{
-            $this->SQL = "UPDATE  Empresa SET "
-                    . " CNPJ = '$this->CNPJ',"
-                    . " NomeFantasia='$this->NomeFantasia',"
-                    . " RazaoSocial='$this->RazaoSocial',"
-                    . " Email=$this->Email "
-                    . " Telefone=$this->Telefone "
-                    . " Senha=$this->Senha "
-                    . " WHERE ID='$this->id'";
+            $this->SQL = "UPDATE  empresa SET "
+                    . " cnpj = '$this->CNPJ',"
+                    . " nome_fantasia='$this->NomeFantasia',"
+                    . " razao_social='$this->RazaoSocial',"
+                    . " email=$this->Email "
+                    . " telefone=$this->Telefone "
+                    . " senha=$this->Senha "
+                    . " WHERE idempresa='$this->id'";
             //echo $this->SQL;
             $result = $this->cnn->Conexao()->prepare($this->SQL);
             $result->execute();
@@ -158,7 +158,7 @@ class Empresa {
             return $id_res;
     }
     public function getIDEmpresa(){
-        $result = $this->cnn->Conexao()->prepare("SELECT ID FROM Empresa  ORDER BY id DESC LIMIT 1");
+        $result = $this->cnn->Conexao()->prepare("SELECT ID FROM empresa  ORDER BY id DESC LIMIT 1");
 	$result->execute();		 
         //resut set alimentado para retornar o json
         while($row = $result->fetch(PDO::FETCH_OBJ)){
