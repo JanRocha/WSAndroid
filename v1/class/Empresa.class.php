@@ -68,11 +68,11 @@ class Empresa {
         $this->Senha = $Senha;
     }
 
-        public function __construct($ID = "") {
+    public function __construct($ID = "") {
         $this->cnn = new conexao();
 
-        $this->SQL = "SELECT * FROM empresa WHERE id = ".$ID;
-        //echo $this->SQL;
+        $this->SQL = "SELECT * FROM empresa WHERE idempresa = ".$ID;
+        //echo'ONSTRUCTOR: '. $this->SQL;
         $result = $this->cnn->Conexao()->prepare($this->SQL);
         $result->execute();
         if($result->rowCount()>=1){
@@ -113,7 +113,8 @@ class Empresa {
         }            
         return json_encode($tr,JSON_PRETTY_PRINT); 
     }
-     public function setParam($param){
+    
+    public function setParam($param){
         if ($param<>'')
             $this->param = explode(',',$param);
         else
@@ -124,19 +125,18 @@ class Empresa {
         $id_res= 0;
         if ($this->id == '-1'){
               $this->SQL = "INSERT INTO empresa("
-                    . "idempresa,"
                     . "cnpj,"
                     . "nome_fantasia,"
                     . "razao_social,"
                     . "email,"
                     . "telefone,"
-                    . "senha) VALUES('-1','"
+                    . "senha) VALUES('"
                     . "$this->CNPJ','"
                     . "$this->NomeFantasia','"
-                    . "$this->RazaoSocial',"
-                    . "$this->Email, "
-                    . "$this->Telefone,"
-                    . "$this->Senha)";
+                    . "$this->RazaoSocial','"
+                    . "$this->Email','"
+                    . "$this->Telefone','"
+                    . "$this->Senha')";
             //echo $this->SQL;
             $result = $this->cnn->Conexao()->prepare($this->SQL);
             $result->execute();                
@@ -146,10 +146,10 @@ class Empresa {
                     . " cnpj = '$this->CNPJ',"
                     . " nome_fantasia='$this->NomeFantasia',"
                     . " razao_social='$this->RazaoSocial',"
-                    . " email=$this->Email "
-                    . " telefone=$this->Telefone "
-                    . " senha=$this->Senha "
-                    . " WHERE idempresa='$this->id'";
+                    . " email='$this->Email',"
+                    . " telefone='$this->Telefone',"
+                    . " senha='$this->Senha' "
+                    . " WHERE idempresa='$this->idempresa'";
             //echo $this->SQL;
             $result = $this->cnn->Conexao()->prepare($this->SQL);
             $result->execute();
@@ -158,17 +158,17 @@ class Empresa {
             return $id_res;
     }
     public function getIDEmpresa(){
-        $result = $this->cnn->Conexao()->prepare("SELECT ID FROM empresa  ORDER BY id DESC LIMIT 1");
+        $result = $this->cnn->Conexao()->prepare("SELECT idempresa FROM empresa  ORDER BY idempresa DESC LIMIT 1");
 	$result->execute();		 
         //resut set alimentado para retornar o json
         while($row = $result->fetch(PDO::FETCH_OBJ)){
             $codigo= $row;
         }    
-       return  $codigo->ID;    
+       return  $codigo->idempresa;    
     }
 
     public function deletarEmpresa($IDPonto) {        
-        $result= $this->cnn->Conexao()->prepare("DELETE FROM Empresa WHERE id = ".$IDPonto);
+        $result= $this->cnn->Conexao()->prepare("DELETE FROM empresa WHERE idempresa = ".$IDPonto);
         $result->execute();
         if ($result->rowCount()>0)
             return true;
