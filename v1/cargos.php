@@ -24,7 +24,7 @@ if (isset($_GET['CHAVE'])){
             
        }elseif ($_GET['CHAMADA']=='GETCARGO') {             
             include_once './class/Cargos.class.php';
-            $empresa = new Cargos(); 
+            $cargo = new Cargos(); 
             if(isset($_GET['PARAM']))
                 $cargo->setParam($_GET['PARAM']);   
             echo $cargo->getCargo();   
