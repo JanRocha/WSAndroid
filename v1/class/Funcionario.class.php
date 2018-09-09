@@ -4,19 +4,48 @@ include_once 'conexao.class.php';
 class Funcionario {
     private $param ="";
     private $id;
+    private $idEmpresa;
     private $Nome;
     private $CPF;
     private $DataDeNascimento;
     private $NomeDaMae;
+    private $RG;
+    private $Naturalidade;
     private $Foto;
     private $Email;
     private $Senha;
+    private $EmpresaIdEmpresa;
+    private $idCargo;
+    private $CargosIdCargo;
     private $cnn="";
     private $SQL = "";
+
+    public function __construct($ID = "") {
+        $this->cnn = new conexao();
+
+        $this->SQL = "SELECT * FROM funcionarios WHERE idfuncionario = ".$ID;
+       // echo $this->SQL;
+        $result = $this->cnn->Conexao()->prepare($this->SQL);
+        $result->execute();
+        if($result->rowCount()>=1){
+            $this->id= $ID;          
+        }else{
+            $this->id= '-1';
+        }
+    }
     
     function getId() {
         return $this->id;
     }
+
+    function getIdEmpresa() {
+        return $this->idEmpresa;
+    }
+
+    public function setIdEmpresa($idEmpresa){
+        $this->idEmpresa=$idEmpresa;
+    }
+
     function getCPF() {
         return $this->CPF;
     }
@@ -56,40 +85,52 @@ class Funcionario {
     function setEmail($Email) {
         $this->Email = $Email;
     }
-
-    
-    public function __construct($ID = "") {
-        $this->cnn = new conexao();
-
-        $this->SQL = "SELECT * FROM UsuarioDTO WHERE id = ".$ID."";
-       // echo $this->SQL;
-        $result = $this->cnn->Conexao()->prepare($this->SQL);
-        $result->execute();
-        if($result->rowCount()>=1){
-            $this->id= $ID;
-           /* while ($row =$result->fetch(PDO::FETCH_OBJ)){
-                $this->login = $row->lOGIN;
-                $this->senha = $row->SENHA;
-                $this->nome = $row->NOME;
-                $this->id= $row-ID;
-            }*/
-        }else{
-            $this->id= '-1';
-        }
-    }
     
     function setLogin($login) {
         $this->login = $login;
     }
-    public function setnome($Nome){
-      $this->nome=$Nome;
-    }
     
+    function getNome() {
+        return $this->nome;
+    }
+
+    public function setnome($Nome){
+        $this->nome=$Nome;
+    }
+
+    function getSenha() {
+        return $this->senha;
+    }
+
     public function setSenha($Senha){
         $this->senha=$Senha;
     }
 
-    public function getusuariosDTO() {        
+    function getEmpresaIdEmpresa() {
+        return $this->EmpresaIdEmpresa;
+    }
+
+    public function setEmpresaIdEmpresa($EmpresaIdEmpresa){
+        $this->EmpresaIdEmpresa=$EmpresaIdEmpresa;
+    }
+
+    function getIdCargo() {
+        return $this->IdCargo;
+    }
+
+    public function setIdCargo($idCargo){
+        $this->idCargo=$idCargo;
+    }
+
+    function getCargosIdCargo() {
+        return $this->CargosIdCargo;
+    }
+
+    public function setCargosIdCargo($CargosIdCargo){
+        $this->CargosIdCargo=$CargosIdCargo;
+    }
+
+    public function getFuncionario() {        
         $in='';
         if($this->param <>''){          
             foreach ($this->param as $key => $value) {
@@ -101,14 +142,13 @@ class Funcionario {
         }else
             $where='';        
          
-        $result= $this->cnn->Conexao()->prepare("SELECT * FROM UsuarioDTO ".$where);
-		 $result->execute();
-		 
+        $result= $cnn->Conexao()->prepare("SELECT * FROM funcionario ".$where);
+		$result->execute();
         //resut set alimentado para retornar o json
         while($row = $result->fetch(PDO::FETCH_ASSOC)){
             $tr[] = $row;
-        }
-        return json_encode($tr, true);
+        }            
+        return json_encode($tr,JSON_PRETTY_PRINT); 
     }
     public function setParam($param){
         if ($param<>'')
@@ -118,42 +158,81 @@ class Funcionario {
     }
     
     public function salvar() {
-        if ($this->id == '-1'){ 
-            $count  = -1; 
-            if ($this->getLoginn()== FALSE){
-                $this->SQL = "INSERT INTO UsuarioDTO(id,nome,login,senha,foto) VALUES('-1','$this->nome','$this->login','$this->senha','$this->foto')";
-                //echo $this->SQL;
-                $result = $this->cnn->Conexao()->prepare($this->SQL);
-                $result->execute();  
-                $count=  $result->rowCount();
-            }
-                     
+        $id_res= 0;
+        if ($this->id == '-1'){
+              $this->SQL = "INSERT INTO funcionario("
+                    . "idEmpresa,"
+                    . "nome,"
+                    . "cpf,"
+                    . "data_nascimento,"
+                    . "nome_mae,"
+                    . "rg,"
+                    . "naturalidade,"
+                    . "email,"
+                    . "foto,"
+                    . "senha,"
+                    . "empresa_idempresa,"
+                    . "idcargo,"
+                    . "cargos_idcargo') VALUES('"
+                    . "$this->idEmpresa','"
+                    . "$this->Nome','"
+                    . "$this->CPF','"
+                    . "$this->DataDeNascimento','"
+                    . "$this->NomeDaMae','"
+                    . "$this->RG','"
+                    . "$this->Naturalidade','"
+                    . "$this->Email','"
+                    . "$this->Foto','"
+                    . "$this->Senha','"
+                    . "$this->EmpresaIdEmpresa','"
+                    . "$this->idCargo','"
+                    . "$this->CargosIdCargo')";
+            //echo $this->SQL;
+            $result = $this->cnn->Conexao()->prepare($this->SQL);
+            $result->execute();                
+            $id_res = $result->rowCount(); 
         }else{
-            $this->SQL = "UPDATE  UsuarioDTO SET NOME = '$this->nome', SENHA='$this->senha', LOGIN='$this->login', FOTO = '$this->foto' WHERE ID='$this->id'";
+            $this->SQL = "UPDATE  funcionarios SET "
+                    . " idempresa = '$this->idEmpresa',"
+                    . " nome = '$this->Nome',"
+                    . " cpf='$this->CPF',"
+                    . " data_nascimento='$this->DataDeNascimento',"
+                    . " nome_mae='$this->NomeDaMae',"
+                    . " rg='$this->RG',"
+                    . " naturalidade='$this->Naturalidade',"
+                    . " email='$this->Email',"
+                    . " foto='$this->Foto',"
+                    . " senha='$this->Senha',"
+                    . " empresa_idempresa='$this->EmpresaIdEmpresa',"
+                    . " idcargo='$this->idCargo',"
+                    . " cargos_idcargo='$this->CargosIdCargo'"
+                    . " WHERE idfuncionario='$this->idfuncionario'";
             //echo $this->SQL;
             $result = $this->cnn->Conexao()->prepare($this->SQL);
             $result->execute();
+            $id_res = $result->rowCount();            
         }        
-            return $count;
+            return $id_res;
     }
-    public function getIDUsuario(){
-       
-         $result= $this->cnn->Conexao()->prepare("SELECT ID FROM UsuarioDTO  ORDER BY id DESC LIMIT 1");
-		 $result->execute();
-		 
+    public function getIDFuncionario(){
+        $result = $this->cnn->Conexao()->prepare("SELECT idfuncionario FROM funcionarios  ORDER BY idfuncionario DESC LIMIT 1");
+	    $result->execute();		 
         //resut set alimentado para retornar o json
         while($row = $result->fetch(PDO::FETCH_OBJ)){
             $codigo= $row;
         }    
-       return  $codigo->ID;    
-    }
-    function getNome() {
-        return $this->nome;
+       return  $codigo->idfuncionario;    
     }
 
-    function getSenha() {
-        return $this->senha;
-    }
+    public function deletarFuncionario($IDPonto) {        
+        $result= $this->cnn->Conexao()->prepare("DELETE FROM funcionarios WHERE idfuncionario = ".$IDPonto);
+        $result->execute();
+        if ($result->rowCount()>0)
+            return true;
+        else        
+             return false;        
+    } 
+    
 
     public function getLogar(){
          $result= $this->cnn->Conexao()->prepare("SELECT ID, NOME, LOGIN,SENHA, FOTO FROM UsuarioDTO WHERE login='$this->login' and senha='$this->senha' ORDER BY id DESC LIMIT 1");
@@ -173,7 +252,7 @@ class Funcionario {
         }else
             return FALSE;
     }
-    private function getLoginn(){
+    private function getLogin(){
          $result= $this->cnn->Conexao()->prepare("SELECT ID FROM UsuarioDTO WHERE login='$this->login' ORDER BY id DESC LIMIT 1");
 	 $result->execute();
 		 
@@ -186,15 +265,6 @@ class Funcionario {
             return TRUE;
         }else
             return FALSE;
-    }
-    public function deletarUsuario($idUsuario) {
-        $result= $this->cnn->Conexao()->prepare("DELETE FROM UsuarioDTO WHERE id = ".$idUsuario);
-        $result->execute();
-        if ($result->rowCount()>0)
-            return true;
-        else        
-             return false;
-        
     }
     
 }
